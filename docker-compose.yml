@@ -1,0 +1,31 @@
+services:
+  juice:
+    image: bkimminich/juice-shop:latest
+    container_name: juice
+    ports:
+      - "3000:3000"
+    networks:
+      - labnet
+    restart: unless-stopped
+
+  kali:
+    build:
+      context: ./kali
+      dockerfile: Dockerfile
+    container_name: kali-fuzz
+    depends_on:
+      - juice
+    networks:
+      - labnet
+    tty: true
+    stdin_open: true
+    environment:
+      - TARGET_BASE=http://juice:3000
+      - WORDLIST_COMMON=/usr/share/seclists/Discovery/Web-Content/common.txt
+    volumes:
+      - ./output:/output
+    restart: unless-stopped
+
+networks:
+  labnet:
+    driver: bridge

