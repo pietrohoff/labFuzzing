@@ -1,7 +1,5 @@
 # 🧪 Fuzzing Lab -- OWASP Juice Shop
 
-## 📌 Descrição
-
 Este laboratório foi desenvolvido para prática de técnicas de **Fuzzing,
 e Testes de Segurança em Aplicações Web**, utilizando o **OWASP Juice Shop** 
 como alvo e uma máquina dedicada para execução das ferramentas ofensivas.
